@@ -2,8 +2,8 @@
 //  BusinessesViewController.swift
 //  Yelp
 //
-//  Created by Timothy Lee on 4/23/15.
-//  Copyright (c) 2015 Timothy Lee. All rights reserved.
+//  Created by Elijah Bullard on 2/10/16.
+//  Copyright (c) 2016 Elijah Bullard. All rights reserved.
 //
 
 import UIKit
@@ -11,6 +11,7 @@ import UIKit
 class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     var businesses: [Business]!
+    var businessesFilter:  [Business]!
     var searchBar: UISearchBar!
     
     @IBOutlet weak var tableView: UITableView!
@@ -70,6 +71,36 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         cell.business = businesses[indexPath.row]
         
         return cell
+    }
+    
+    // Update search filter data based on text entered into the search bar
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if(businessesFilter == nil) {
+            businessesFilter = businesses
+        }
+        
+        //  No change in list when there is no text in the search bar
+        if searchText.isEmpty {
+            businesses = businessesFilter
+        } else {
+            // The user has entered text into the search box
+            // Use the filter method to iterate over all items in the data array
+            // For each item, return true if the item should be included and false if the
+            // item should NOT be included
+            businesses = businesses.filter({(dataItem: Business) -> Bool in
+                
+                // If dataItem matches the searchText, return true to include it
+                if dataItem.name!.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil {
+                    return true
+                } else {
+                    return false
+                }
+            })
+        }
+        
+        tableView.reloadData()
+        
     }
     
     //Shows cancel button when user begins typing in search bar
